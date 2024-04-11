@@ -6,6 +6,7 @@ const User = require("./model/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "434324324fdsfdsfsdf"
+const cookieParser = require("cookie-parser");
 
 app.use(cors(
     {
@@ -14,6 +15,8 @@ app.use(cors(
     }
 ));
 app.use(express.json());
+
+app.use(cookieParser());
 
 mongoose
   .connect(
@@ -60,13 +63,30 @@ app.post("/login", async (req, res) => {
           console.error(err);
           return res.status(500).send("Internal server error");
         }
-        res.cookie("auth-token", token).json("Login successful");
+        res.cookie("authToken", token).json({
+            id: userDoc._id,
+            username
+        });
       }
     );
   } catch (error) {
     console.error(error);
     res.status(400).send("Login failed");
   }
+});
+app.post("/profile", async (req, res) => {
+    const { authToken } = req.cookies;;
+    try {
+      const decoded = await jwt.verify(authToken, JWT_SECRET);
+      res.json(decoded);
+    } catch (error) {
+      console.error(error);
+      res.status(400).send("Profile Info not found");
+    }
+});
+
+app.post("/logout", async (req, res) => {
+  res.cookie("authToken", "").json("logout succefully");
 });
 
 app.listen(4000, () => {
