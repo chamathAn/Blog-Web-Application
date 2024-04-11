@@ -7,8 +7,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = "434324324fdsfdsfsdf"
 const cookieParser = require("cookie-parser");
+const multer = require("multer");
 
-app.use(cors(
+const upload = multer({ dest: 'uploads/' })
+
+app.use(cors(   
     {
         origin: "http://localhost:5173",
         credentials: true
@@ -88,6 +91,10 @@ app.post("/profile", async (req, res) => {
 app.post("/logout", async (req, res) => {
   res.cookie("authToken", "").json("logout succefully");
 });
+
+app.post("/post",upload.single("file"), async (req, res) => {
+    res.json({"files":req.file});
+  });
 
 app.listen(4000, () => {
   console.log("app listening on port 4000!");
