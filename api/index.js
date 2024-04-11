@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const JWT_SECRET = "434324324fdsfdsfsdf"
 const cookieParser = require("cookie-parser");
 const multer = require("multer");
+const fs = require("fs");
+const Post =require("./model/Post");
 
 const upload = multer({ dest: 'uploads/' })
 
@@ -93,7 +95,22 @@ app.post("/logout", async (req, res) => {
 });
 
 app.post("/post",upload.single("file"), async (req, res) => {
-    res.json({"files":req.file});
+    const {originalname, path} = req.file;
+    const parts = originalname.split(".");
+    const ext = parts[parts.length - 1];
+    const newPath = path + "." + ext;
+    fs.renameSync(path, newPath);
+
+    const {title, summary, content} = req.body;
+
+    const postDoc = await Post.create({
+        title,
+        summary,
+        content,
+        image: newPath,
+        author: req.userId
+    });
+    res.json(postDoc);
   });
 
 app.listen(4000, () => {
