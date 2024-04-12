@@ -35,7 +35,7 @@ export const CreatePost = () => {
         data.set('content', content);
         data.append('file', file); 
 
-        axios.post('http://localhost:4000/post', data) 
+        axios.post('http://localhost:4000/post', data,{withCredentials: true}) 
             .then(response => {
                 console.log(response.data)
             })
@@ -51,7 +51,7 @@ export const CreatePost = () => {
             <input type="file" onChange={e => setFile(e.target.files[0])} /> {/* Use files[0] to get the first file */}
             <ReactQuill modules={modules} formats={formats} value={content} onChange={setContent} />
 
-            <button type="submit" style={{ marginTop: '5px' }}>Create Post</button> {/* Added type="submit" */}
+            <button type="submit" style={{ marginTop: '5px' }}>Create Post</button> 
         </form>
     );
 };

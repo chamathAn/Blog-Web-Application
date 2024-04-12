@@ -20,7 +20,7 @@ app.use(cors(
     }
 ));
 app.use(express.json());
-
+app.use('/uploads', express.static('./uploads'));
 app.use(cookieParser());
 
 mongoose
@@ -80,7 +80,11 @@ app.post("/login", async (req, res) => {
   }
 });
 app.post("/profile", async (req, res) => {
-    const { authToken } = req.cookies;;
+    const { authToken } = req.cookies;
+    console.log(authToken);
+    if (!authToken) {
+      return res.status(401).send("Authentication token missing");
+    }
     try {
       const decoded = await jwt.verify(authToken, JWT_SECRET);
       res.json(decoded);
@@ -90,29 +94,53 @@ app.post("/profile", async (req, res) => {
     }
 });
 
+
 app.post("/logout", async (req, res) => {
   res.cookie("authToken", "").json("logout succefully");
 });
 
-app.post("/post",upload.single("file"), async (req, res) => {
-    const {originalname, path} = req.file;
-    const parts = originalname.split(".");
-    const ext = parts[parts.length - 1];
-    const newPath = path + "." + ext;
-    fs.renameSync(path, newPath);
-
-    const {title, summary, content} = req.body;
-
-    const postDoc = await Post.create({
+app.post("/post", upload.single("file"), async (req, res) => {
+    try {
+        const { authToken } = req.cookies;  
+      const { originalname, path } = req.file;
+      const parts = originalname.split(".");
+      const ext = parts[parts.length - 1];
+      const newPath = path + "." + ext;
+      fs.renameSync(path, newPath);
+  
+      const { title, summary, content } = req.body;
+  
+      
+     
+      const decoded = await jwt.verify(authToken, JWT_SECRET);
+  
+      const postDoc = await Post.create({
         title,
         summary,
         content,
         image: newPath,
-        author: req.userId
-    });
-    res.json(postDoc);
+        author: decoded.id,
+      });
+  
+      res.json(postDoc);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  });
+  
+
+  app.get("/post",async (req, res) => {
+    const posts = await Post.find().populate("author", ["username"]).sort({createdAt: -1}).limit(20);
+    res.json(posts);
   });
 
+  app.post("/post/:id",async (req, res) => {
+
+    const {id} = req.params;
+    const posts = await Post.findById(id).populate("author", ["username"]).sort({createdAt: -1}).limit(20);
+    res.json(posts);
+  });
 app.listen(4000, () => {
   console.log("app listening on port 4000!");
 });
