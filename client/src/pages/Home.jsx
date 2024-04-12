@@ -8,7 +8,7 @@ const [posts, setPosts] = useState([]);
     axios.get("http://localhost:4000/post")
     .then((res) => {
       setPosts(res.data);
-      console.log(res.data);
+
     })
     .catch((err) => {
       console.error("Error fetching posts:", err);

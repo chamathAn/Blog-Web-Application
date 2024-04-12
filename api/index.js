@@ -76,7 +76,6 @@ app.post("/login", async (req, res) => {
 });
 app.post("/profile", async (req, res) => {
   const { authToken } = req.cookies;
-  console.log(authToken);
   if (!authToken) {
     return res.status(401).send("Authentication token missing");
   }

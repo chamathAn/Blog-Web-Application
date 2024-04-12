@@ -24,7 +24,7 @@ export default function Login() {
         }
       )
       .then((res) => {
-        console.log(res);
+        
         if (res.status === 200) {
           setUserInfo(res.data);
           setRedirect(true);

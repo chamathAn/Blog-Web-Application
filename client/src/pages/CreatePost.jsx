@@ -37,7 +37,7 @@ export const CreatePost = () => {
 
         axios.post('http://localhost:4000/post', data,{withCredentials: true}) 
             .then(response => {
-                console.log(response.data)
+                console.log('Post created successfully:', );
             })
             .catch(error => {
                 console.error('Error creating post:', error); 

@@ -9,7 +9,6 @@ export default function ViewPost() {
   const {userInfo} = useContext(UserContext);
 
   const { image, title, summary, content, author, createdAt } = postInfo;
-
   console.log(author?.username);
   let { id } = useParams();
   useEffect(() => {
@@ -19,7 +18,7 @@ export default function ViewPost() {
         setPostInfo(res.data);
       });
   }, []);
-  console.log(postInfo);
+
   if (!postInfo) {
     return "";
   }
