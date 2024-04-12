@@ -141,3 +141,16 @@ div.viewPost div.author{
 div.viewPost div.content{
   line-height: 1.6rem;
 }
+div.editRow{
+  text-align: center;
+  margin-top: 20px;
+}
+
+div.editRow a.edit-btn{
+  text-decoration: none;
+  color: #fff;
+  padding : 5px 10px;
+  background-color: #555;
+  border-radius: 5px;
+  border-radius: 15px 30px;
+}

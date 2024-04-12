@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { formatISO9075 } from "date-fns";
+import { UserContext } from "../userContext";
 
 export default function ViewPost() {
   const [postInfo, setPostInfo] = useState({});
+  const {userInfo} = useContext(UserContext);
 
   const { image, title, summary, content, author, createdAt } = postInfo;
 
@@ -21,7 +23,8 @@ export default function ViewPost() {
   if (!postInfo) {
     return "";
   }
-  const username = author ? author.username : "";
+
+
   return (
     <div className="viewPost">
       <div className="image">
@@ -35,6 +38,15 @@ export default function ViewPost() {
         ""
       )}
       <div className="author">by @{author?.username}</div>
+
+      {userInfo.id === author?._id && (
+        
+        <div className="editRow">
+          <Link to={`/post/${id}/edit`} className="edit-btn">
+            Edit Post
+          </Link>
+        </div>
+      )}
       <div dangerouslySetInnerHTML={{ __html: content }} className="content" />
     </div>
   );
